@@ -25,7 +25,7 @@ export interface PharmacyFormData {
     telephone: string; 
     latitude: string;
     longLatitude: string; 
-    image?: string;
+    image: File | string;
     status?: PharmacyStatus;
     createdAt?: Date;
     updatedAt?: Date;

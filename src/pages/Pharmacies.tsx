@@ -18,7 +18,7 @@ import {
     ArrowLeftRight,
     Copy,
     ClipboardCheck,
-    MessageSquare
+    MessageSquare,
 } from 'lucide-react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PharmacyAddForm from '../components/PharmacyAddForm';
@@ -71,14 +71,11 @@ const Pharmacies = () => {
     }, [fetchPharmacies]);
 
     const filteredPharmacies = pharmacies.filter((pharmacy: Pharmacy) => {
-
         if (!pharmacy || !pharmacy.name || !pharmacy.address) return false;
-        const matchesSearchTerm = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearchTerm = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) || pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatusFilter = statusFilter === 'all' || pharmacy.status === statusFilter;
         return matchesSearchTerm && matchesStatusFilter;
     });
-
 
     // Delete handlers
     const handleDeleteClick = (pharmacy: Pharmacy) => {
@@ -99,9 +96,7 @@ const Pharmacies = () => {
             await pharmacyService.deletePharmacy(pharmacyToDelete.id);
 
             // Update local state
-            setPharmacies(prevPharmacies =>
-                prevPharmacies.filter(p => p.id !== pharmacyToDelete.id)
-            );
+            setPharmacies((prevPharmacies) => prevPharmacies.filter((p) => p.id !== pharmacyToDelete.id));
 
             toast.success(t('pharmacy deleted successfully'));
             handleDeleteCancel();
@@ -117,7 +112,7 @@ const Pharmacies = () => {
     const statusOptions = [
         { value: 'all', label: t('all'), icon: Building2 },
         { value: 'open', label: t('open'), icon: CheckCircle2 },
-        { value: 'closed', label: t('closed'), icon: XCircle }
+        { value: 'closed', label: t('closed'), icon: XCircle },
     ];
 
     // ====== Refs & Effects ======
@@ -184,13 +179,7 @@ const Pharmacies = () => {
             setIsStatusUpdating(pharmacyId);
             await pharmacyService.updatePharmacyStatus(pharmacyId);
 
-            setPharmacies(prevPharmacies =>
-                prevPharmacies.map(p =>
-                    p.id === pharmacyId
-                        ? { ...p, status: p.status === 'open' ? ('close' as PharmacyStatus) : ('open' as PharmacyStatus) }
-                        : p
-                )
-            );
+            setPharmacies((prevPharmacies) => prevPharmacies.map((p) => (p.id === pharmacyId ? { ...p, status: p.status === 'open' ? ('close' as PharmacyStatus) : ('open' as PharmacyStatus) } : p)));
 
             toast.success(t('status updated successfully'));
         } catch (err) {
@@ -207,10 +196,9 @@ const Pharmacies = () => {
         console.log('View pharmacy:', pharmacy);
     };
 
-    const handleCopyCoordinate = (value: number, type: 'latitude' | 'longitude') => {
-        navigator.clipboard.writeText(value.toString());
+    const handleCopyCoordinate = (value: string, type: 'latitude' | 'longitude') => {
+        navigator.clipboard.writeText(value);
 
-        // Afficher une notification toast
         toast.success(
             <div className="flex items-center gap-2">
                 <ClipboardCheck className="w-4 h-4" />
@@ -241,10 +229,9 @@ const Pharmacies = () => {
                     <div className="relative">
                         <button
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-full border ${statusFilter !== 'all'
-                                ? 'border-primary text-primary bg-primary/10'
-                                : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
-                                } hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300`}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-full border ${
+                                statusFilter !== 'all' ? 'border-primary text-primary bg-primary/10' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
+                            } hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300`}
                         >
                             <Filter className="w-5 h-5" />
                             {t('status')}: {t(statusFilter)}
@@ -262,10 +249,9 @@ const Pharmacies = () => {
                                                 setStatusFilter(option.value as 'all' | 'open' | 'closed');
                                                 setIsFilterOpen(false);
                                             }}
-                                            className={`w-full flex items-center gap-2 px-4 py-2 text-sm ${statusFilter === option.value
-                                                ? 'bg-primary/10 text-primary'
-                                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                                } transition-colors duration-200`}
+                                            className={`w-full flex items-center gap-2 px-4 py-2 text-sm ${
+                                                statusFilter === option.value ? 'bg-primary/10 text-primary' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                            } transition-colors duration-200`}
                                         >
                                             <Icon className="w-4 h-4" />
                                             {option.label}
@@ -275,7 +261,10 @@ const Pharmacies = () => {
                             </div>
                         )}
                     </div>
-                    <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300">
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300"
+                    >
                         <PlusCircle className="w-5 h-5" />
                         {t('add pharmacy')}
                     </button>
@@ -289,7 +278,6 @@ const Pharmacies = () => {
                 </div>
             ) : (
                 <>
-
                     {/* Table */}
                     <div className="relative overflow-hidden">
                         <PerfectScrollbar className="relative w-full rounded-lg">
@@ -313,7 +301,7 @@ const Pharmacies = () => {
                                             <tr key={pharmacy.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200">
                                                 <td className="px-6 py-4">
                                                     <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/20 hover:ring-primary transition-all duration-300">
-                                                        <img src={pharmacy.image} alt={pharmacy.name} className="w-full h-full object-cover" />
+                                                        {pharmacy.image && <img src={pharmacy.image} alt={pharmacy.name} className="w-full h-full object-cover" />}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -351,9 +339,7 @@ const Pharmacies = () => {
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/50">
                                                             <ArrowDownUp className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
-                                                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                                                                {pharmacy.latitude}°N
-                                                            </span>
+                                                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{pharmacy.latitude}°N</span>
                                                         </div>
                                                         <button
                                                             onClick={() => handleCopyCoordinate(pharmacy.latitude, 'latitude')}
@@ -368,9 +354,7 @@ const Pharmacies = () => {
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-green-50 dark:bg-green-900/50">
                                                             <ArrowLeftRight className="w-3.5 h-3.5 text-green-500 dark:text-green-400" />
-                                                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                                                                {pharmacy.longLatitude}°E
-                                                            </span>
+                                                            <span className="text-sm font-medium text-green-700 dark:text-green-300">{pharmacy.longLatitude}°E</span>
                                                         </div>
                                                         <button
                                                             onClick={() => handleCopyCoordinate(pharmacy.longLatitude, 'longitude')}
@@ -385,11 +369,13 @@ const Pharmacies = () => {
                                                     <button
                                                         onClick={() => toggleStatus(pharmacy.id)}
                                                         disabled={isStatusUpdating === pharmacy.id}
-                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-sm ${pharmacy.status === 'open'
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-sm ${
+                                                            pharmacy.status === 'open'
                                                                 ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-500/30'
                                                                 : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/30'
-                                                            }`}
-                                                        title={t(pharmacy.status === 'open' ? 'click to close' : 'click to open')}>
+                                                        }`}
+                                                        title={t(pharmacy.status === 'open' ? 'click to close' : 'click to open')}
+                                                    >
                                                         {isStatusUpdating === pharmacy.id ? (
                                                             <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                                                         ) : (
@@ -415,7 +401,8 @@ const Pharmacies = () => {
                                                         <button
                                                             onClick={() => navigate(`/pharmacies/${pharmacy.id}/comments`)}
                                                             className="group p-2 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 transition-all duration-300 flex items-center gap-2"
-                                                            title={t('view_comments')}>
+                                                            title={t('view_comments')}
+                                                        >
                                                             <MessageSquare className="w-5 h-5 text-blue-500 group-hover:text-blue-600 dark:text-blue-400" />
                                                         </button>
                                                         {/* View Button */}
@@ -457,12 +444,8 @@ const Pharmacies = () => {
                     {filteredPharmacies.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-12">
                             <AlertCircle className="w-16 h-16 text-gray-400 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                                {t('no pharmacies found')}
-                            </h3>
-                            <p className="text-gray-500 dark:text-gray-400">
-                                {t('try different search')}
-                            </p>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{t('no pharmacies found')}</h3>
+                            <p className="text-gray-500 dark:text-gray-400">{t('try different search')}</p>
                         </div>
                     )}
                 </>
@@ -472,29 +455,11 @@ const Pharmacies = () => {
                 <PharmacyAddForm onSubmit={handleAddPharmacy} onCancel={() => setIsAddModalOpen(false)} />
             </Modal>
 
-            <Modal
-                isOpen={isUpdateModalOpen}
-                onClose={() => setIsUpdateModalOpen(false)}
-                title={t('update pharmacy')}
-            >
-                {pharmacyToUpdate && (
-                    <PharmacyUpdateForm
-                        pharmacy={pharmacyToUpdate}
-                        onSubmit={handleUpdateSubmit}
-                        onCancel={() => setIsUpdateModalOpen(false)}
-                        isLoading={isUpdating}
-                        isRTL={isRTL}
-                    />
-                )}
+            <Modal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} title={t('update pharmacy')}>
+                {pharmacyToUpdate && <PharmacyUpdateForm pharmacy={pharmacyToUpdate} onSubmit={handleUpdateSubmit} onCancel={() => setIsUpdateModalOpen(false)} isLoading={isUpdating} isRTL={isRTL} />}
             </Modal>
 
-            <DeletePharmacy
-                isOpen={isDeleteModalOpen}
-                onClose={handleDeleteCancel}
-                onConfirm={handleDeleteConfirm}
-                pharmacyName={pharmacyToDelete?.name || ''}
-                isLoading={isDeleting}
-            />
+            <DeletePharmacy isOpen={isDeleteModalOpen} onClose={handleDeleteCancel} onConfirm={handleDeleteConfirm} pharmacyName={pharmacyToDelete?.name || ''} isLoading={isDeleting} />
         </div>
     );
 };

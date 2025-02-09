@@ -29,10 +29,10 @@ class PharmacyService {
         return response.data;
     }
 
-    async updatePharmacy(id: string, pharmacyData: Partial<Pharmacy>): Promise<Pharmacy> {
+    async updatePharmacy(id: string, formData: FormData): Promise<Pharmacy> {
         const response: AxiosResponse<Pharmacy> = await axiosInstance.patch(
             `${this.BASE_PATH}/${id}`,
-            pharmacyData
+            formData
         );
         return response.data;
     }
