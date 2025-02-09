@@ -16,7 +16,9 @@ interface PharmacyUpdateFormProps {
 
 const PharmacyUpdateForm = ({ pharmacy, onSubmit, onCancel, isLoading, isRTL }: PharmacyUpdateFormProps) => {
     const { t } = useTranslation();
-    const [preview, setPreview] = useState<string>(pharmacy.image || '');
+    const [preview, setPreview] = useState<string>(
+        typeof pharmacy.image === 'string' ? pharmacy.image : ''
+      );
 
     const formik = useFormik({
         initialValues: {
@@ -25,7 +27,7 @@ const PharmacyUpdateForm = ({ pharmacy, onSubmit, onCancel, isLoading, isRTL }: 
             telephone: pharmacy.telephone,
             openHours: pharmacy.openHours,
             closeHours: pharmacy.closeHours,
-            image: pharmacy.image || '',
+            image: pharmacy.image || null,
             latitude: pharmacy.latitude,
             longLatitude: pharmacy.longLatitude,
         },
@@ -33,16 +35,22 @@ const PharmacyUpdateForm = ({ pharmacy, onSubmit, onCancel, isLoading, isRTL }: 
         onSubmit: async (values) => {
             const formData = new FormData();
             Object.entries(values).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
-                    if (key === 'image' && value instanceof File) {
-                        formData.append('image', value);
-                    } else {
-                        formData.append(key, value.toString());
-                    }
+              if (value === undefined || value === null) return;
+          
+              // Special handling for image field
+              if (key === 'image') {
+                if (typeof value === 'string') {
+                  // Existing image URL
+                  formData.append('imageUrl', value);
+                } else {
+                  formData.append('image', value);
                 }
+              } else {
+                formData.append(key, value.toString());
+              }
             });
             await onSubmit(formData);
-        },
+          },
     });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
